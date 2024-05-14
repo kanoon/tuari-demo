@@ -1,7 +1,8 @@
-# Tauri + React + Typescript
+## How to Run
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+Require to set database connection `src-tauri/src/database.rs` or you can run postgres database from this [kanoon/go-gin-gorm-api](ttps://github.com/kanoon/go-gin-gorm-api)
+https://github.com/kanoon/go-gin-gorm-api/tree/master?tab=readme-ov-file#run-db-and-api-with-docker-container
 
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+```
+npx tuari dev
+```

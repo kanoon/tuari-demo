@@ -1,12 +1,39 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
 
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
   const [name, setName] = useState("");
+  const [users, setUsers] = useState<User[]>([]);
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const users = await invoke<User[]>("fetch_users");
+  //       setUsers(users);
+  //     } catch (error) {
+  //       console.error("Failed to fetch users:", error);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
+  async function get() {
+    try {
+      const users = await invoke<User[]>("fetch_users");
+      setUsers(users);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    }
+  }
   async function greet() {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
     setGreetMsg(await invoke("greet", { name }));
@@ -28,9 +55,9 @@ function App() {
         </a>
       </div>
 
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
+      {/* <p>Click on the Tauri, Vite, and React logos to learn more.</p> */}
 
-      <form
+      {/* <form
         className="row"
         onSubmit={(e) => {
           e.preventDefault();
@@ -45,7 +72,26 @@ function App() {
         <button type="submit">Greet</button>
       </form>
 
-      <p>{greetMsg}</p>
+      <p>{greetMsg}</p> */}
+
+      <div>
+        <h1>User List</h1>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            get();
+          }}
+        >
+          Click me!
+        </button>
+        <ul>
+          {users.map((user) => (
+            <li key={user.id}>
+              {user.name} ({user.email})
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
