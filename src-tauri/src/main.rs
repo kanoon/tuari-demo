@@ -1,13 +1,13 @@
-// src-tauri/src/main.rs
-#![cfg_attr(
-    all(not(debug_assertions), target_os = "windows"),
-    windows_subsystem = "windows"
-)]
+// Prevents additional console window on Windows in release, DO NOT REMOVE!!
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 
 mod database;
 
+use std::fs::OpenOptions;
+use std::io::Write;
+
 use tauri::State;
-use tokio::sync::Mutex;
 use sqlx::PgPool;
 use dotenv::dotenv;
 
@@ -24,9 +24,23 @@ async fn fetch_users(state: State<'_, AppState>) -> Result<Vec<database::User>, 
     }
 }
 
+// #[tauri::command]
+// fn greet(name: &str) -> String {
+//     format!("Hello, {}! You've been greeted from Rust!", name)
+// }
+
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+fn log_message(level: String, message: String) {
+  let log_file_path = "app_logs.log"; // Adjust the path as needed
+
+  // Open the log file in append mode, create if it doesn't exist
+  let mut file = OpenOptions::new()
+      .create(true)
+      .append(true)
+      .open(log_file_path)
+      .expect("Unable to open log file");
+
+  writeln!(file, "[{}] - {}", level, message).expect("Unable to write to log file");
 }
 
 #[tokio::main]
@@ -37,7 +51,7 @@ async fn main() {
 
     tauri::Builder::default()
         .manage(app_state)
-        .invoke_handler(tauri::generate_handler![fetch_users])
+        .invoke_handler(tauri::generate_handler![fetch_users,log_message])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

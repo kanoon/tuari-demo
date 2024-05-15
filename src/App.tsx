@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
+import log from "./logger";
 
 interface User {
   id: number;
@@ -9,35 +10,44 @@ interface User {
   email: string;
 }
 
+// Define a type for the log level
+type LogLevel = "trace" | "debug" | "info" | "warn" | "error";
+
+const logToBackend = async (
+  level: LogLevel,
+  message: string
+): Promise<void> => {
+  try {
+    await invoke("log_message", { level, message });
+  } catch (error) {
+    log.error("Failed to send log to backend:", error);
+  }
+};
+
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  // const [greetMsg, setGreetMsg] = useState("");
+  // const [name, setName] = useState("");
   const [users, setUsers] = useState<User[]>([]);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const users = await invoke<User[]>("fetch_users");
-  //       setUsers(users);
-  //     } catch (error) {
-  //       console.error("Failed to fetch users:", error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
   async function get() {
     try {
+      // Example of logging an info message
+      // log.info("This is an info message");
+      // logToBackend("info", "This is an info message from ReactJS");
+
       const users = await invoke<User[]>("fetch_users");
+      logToBackend("info", `Return users: ${JSON.stringify(users)}`);
       setUsers(users);
     } catch (error) {
-      console.error("Failed to fetch users:", error);
+      // console.error("Failed to fetch users:", error); // Example of logging an info message
+      log.error("Failed to fetch users:", error);
+      logToBackend("error", `Failed to fetch users. ${JSON.stringify(users)}`);
     }
   }
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("greet", { name }));
-  }
+  // async function greet() {
+  //   // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+  //   setGreetMsg(await invoke("greet", { name }));
+  // }
 
   return (
     <div className="container">

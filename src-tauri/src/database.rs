@@ -1,5 +1,5 @@
 // src-tauri/src/database.rs
-use sqlx::{PgPool, Postgres, Pool};
+use sqlx::PgPool;
 use sqlx::postgres::PgPoolOptions;
 use serde::Serialize;
 use std::env;
