@@ -41,7 +41,7 @@ function App() {
     } catch (error) {
       // console.error("Failed to fetch users:", error); // Example of logging an info message
       log.error("Failed to fetch users:", error);
-      logToBackend("error", `Failed to fetch users. ${JSON.stringify(users)}`);
+      logToBackend("error", `Failed to fetch users. ${JSON.stringify(error)}`);
     }
   }
   // async function greet() {
