@@ -3,6 +3,7 @@
 
 
 mod database;
+mod ldap;
 
 use std::fs::OpenOptions;
 use std::io::Write;
@@ -24,11 +25,6 @@ async fn fetch_users(state: State<'_, AppState>) -> Result<Vec<database::User>, 
     }
 }
 
-// #[tauri::command]
-// fn greet(name: &str) -> String {
-//     format!("Hello, {}! You've been greeted from Rust!", name)
-// }
-
 #[tauri::command]
 fn log_message(level: String, message: String) {
   let log_file_path = "app_logs.log"; // Adjust the path as needed
@@ -46,6 +42,10 @@ fn log_message(level: String, message: String) {
 #[tokio::main]
 async fn main() {
     dotenv().ok();
+    println!("Authentication ...");
+    let _ = ldap::check_ldap();
+
+    
     let pool = database::establish_connection().await;
     let app_state = AppState { pool };
 
